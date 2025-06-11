@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Money Tracker</string>
+    
+    <!-- Navigation -->
+    <string name="transactions">Giao dịch</string>
+    <string name="reports">Báo cáo</string>
+    <string name="categories">Danh mục</string>
+    
+    <!-- Home Screen -->
+    <string name="hello_user">Xin chào, %1$s</string>
+    <string name="total_balance">Tổng số dư</string>
+    <string name="income">Thu nhập</string>
+    <string name="expense">Chi tiêu</string>
+    <string name="expenses">Chi tiêu</string>
+    <string name="recent_transactions">Giao dịch gần đây</string>
+    <string name="add_transaction">Thêm giao dịch</string>
+    <string name="add_balance">Thêm số dư</string>
+    
+    <!-- Transaction Screen -->
+    <string name="transaction_details">Chi tiết giao dịch</string>
+    <string name="amount">Số tiền</string>
+    <string name="note">Ghi chú</string>
+    <string name="note_hint">Ghi chú (Không bắt buộc)</string>
+    <string name="category">Danh mục</string>
+    <string name="select_category">Chọn danh mục</string>
+    <string name="save">Lưu</string>
+    <string name="update">Cập nhật</string>
+    <string name="delete">Xóa</string>
+    <string name="back">Quay lại</string>
+    <string name="edit_transaction">Sửa giao dịch</string>
+    
+    <!-- Category Screen -->
+    <string name="add_category">Thêm danh mục</string>
+    <string name="edit_category">Sửa danh mục</string>
+    <string name="category_name">Tên danh mục</string>
+    <string name="category_type">Loại danh mục</string>
+    <string name="category_icon">Biểu tượng</string>
+    <string name="select_icon">Chọn biểu tượng</string>
+    <string name="no_categories">Chưa có danh mục nào</string>
+    <string name="confirm_delete">Xác nhận xóa</string>
+    <string name="delete_category_confirmation">Bạn có chắc chắn muốn xóa danh mục này không?</string>
+    
+    <!-- Report Screen -->
+    <string name="monthly_report">Báo cáo tháng</string>
+    <string name="income_report">Báo cáo thu nhập</string>
+    <string name="expense_report">Báo cáo chi tiêu</string>
+    <string name="total">Tổng cộng</string>
+    <string name="average">Trung bình</string>
+    <string name="of_income">của thu nhập</string>
+    <string name="expense_by_category">Chi tiêu theo danh mục</string>
+    
+    <!-- Common -->
+    <string name="error">Lỗi</string>
+    <string name="loading">Đang tải…</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="cancel">Hủy</string>
+    <string name="ok">OK</string>
+    
+    <!-- Validation -->
+    <string name="error_field_required">Vui lòng nhập thông tin này</string>
+    <string name="error_invalid_amount">Vui lòng nhập số tiền hợp lệ</string>
+    <string name="error_category_exists">Danh mục này đã tồn tại</string>
+</resources>
