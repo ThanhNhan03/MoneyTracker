@@ -42,8 +42,8 @@ fun HomeScreen(
 
     // Format today's date
     val today = remember {
-        val dateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("vi"))
-        dateFormat.format(Calendar.getInstance().time)
+        val dateFormat = SimpleDateFormat("MMMM yyyy", Locale("vi"))
+        dateFormat.format(Calendar.getInstance().time).replaceFirstChar { it.uppercase() }
     }
 
     // Calculate totals
