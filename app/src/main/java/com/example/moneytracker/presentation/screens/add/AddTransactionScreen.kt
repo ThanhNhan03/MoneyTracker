@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.Note
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -109,7 +113,13 @@ fun AddTransactionScreen(
                 singleLine = true,
                 keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
                     keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
-                )
+                ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.AttachMoney,
+                        contentDescription = stringResource(R.string.amount)
+                    )
+                }
             )
 
             // Category Selection
@@ -117,6 +127,12 @@ fun AddTransactionScreen(
                 onClick = { showCategoryDialog = true },
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Icon(
+                    imageVector = Icons.Default.Category,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(selectedCategoryName.ifEmpty { stringResource(R.string.select_category) })
             }
 
@@ -128,7 +144,13 @@ fun AddTransactionScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = false,
                 minLines = 3,
-                maxLines = 3
+                maxLines = 3,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Note,
+                        contentDescription = stringResource(R.string.note_hint)
+                    )
+                }
             )
 
             // Save Button
@@ -139,8 +161,14 @@ fun AddTransactionScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(56.dp)
             ) {
+                Icon(
+                    imageVector = Icons.Default.Save,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     if (transactionId != null) 
                         stringResource(R.string.update)

@@ -9,5 +9,6 @@ data class Category(
     val id: Int = 0,
     val name: String,
     val type: String, // "income" or "expense"
-    val icon: String = ""
+    val icon: String = "",
+    val isDefault: Boolean = false
 )

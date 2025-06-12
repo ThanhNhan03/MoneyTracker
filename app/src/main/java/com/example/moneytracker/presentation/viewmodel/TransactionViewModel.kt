@@ -53,7 +53,7 @@ class TransactionViewModel @Inject constructor(
                 // If not, you'll need to implement GetTransactionUseCase
                 getTransactionsUseCase(Date(0), Date()).collectLatest { transactions ->
                     val transaction = transactions.firstOrNull { it.id == id }
-                    _transactionToEdit.value = transaction
+                _transactionToEdit.value = transaction
                 }
             } catch (e: Exception) {
                 _error.value = e.message

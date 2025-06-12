@@ -36,7 +36,8 @@
     <string name="category_name">Tên danh mục</string>
     <string name="category_type">Loại danh mục</string>
     <string name="category_icon">Biểu tượng</string>
-    <string name="select_icon">Chọn biểu tượng</string>
+    <string name="select_icon">Chọn icon</string>
+    <string name="change_icon">Đổi icon</string>
     <string name="no_categories">Chưa có danh mục nào</string>
     <string name="confirm_delete">Xác nhận xóa</string>
     <string name="delete_category_confirmation">Bạn có chắc chắn muốn xóa danh mục này không?</string>
@@ -62,4 +63,6 @@
     <string name="error_field_required">Vui lòng nhập thông tin này</string>
     <string name="error_invalid_amount">Vui lòng nhập số tiền hợp lệ</string>
     <string name="error_category_exists">Danh mục này đã tồn tại</string>
+
+    <string name="more_options">Thêm lựa chọn</string>
 </resources>

@@ -6,6 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,6 +24,7 @@ import com.example.moneytracker.presentation.components.TransactionList
 import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
 import com.example.moneytracker.util.toVND
 import java.util.*
+import java.text.SimpleDateFormat
 
 import com.example.moneytracker.data.local.entities.Transaction
 
@@ -36,6 +39,12 @@ fun HomeScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     var showAddBalanceDialog by remember { mutableStateOf(false) }
+
+    // Format today's date
+    val today = remember {
+        val dateFormat = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("vi"))
+        dateFormat.format(Calendar.getInstance().time)
+    }
 
     // Calculate totals
     val totalIncome = transactions
@@ -67,20 +76,22 @@ fun HomeScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically  
                 ) {
-                    Text(
-                        text = stringResource(R.string.hello_user, "User"),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                    Column {
+                        Text(
+                            text = today,
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
-                    )
+                    }
                     IconButton(
                         onClick = { showAddBalanceDialog = true }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Add,
+                            imageVector = Icons.Default.AccountBalance,
                             contentDescription = stringResource(R.string.add_balance),
                             tint = Color.White
                         )
@@ -231,6 +242,12 @@ fun HomeScreen(
                         showAddBalanceDialog = false
                     }
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.Save,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.save))
                 }
             },
@@ -238,6 +255,12 @@ fun HomeScreen(
                 TextButton(
                     onClick = { showAddBalanceDialog = false }
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(stringResource(R.string.cancel))
                 }
             }

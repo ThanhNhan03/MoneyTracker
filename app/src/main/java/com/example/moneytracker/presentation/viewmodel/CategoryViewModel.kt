@@ -50,9 +50,9 @@ class CategoryViewModel @Inject constructor(
             try {
                 repository.getCategoriesByType(type)
                     .collect { categories ->
-                        _categories.value = categories
-                        _isLoading.value = false
-                    }
+                    _categories.value = categories
+                    _isLoading.value = false
+                }
             } catch (e: Exception) {
                 _error.value = e.message
                 _isLoading.value = false
@@ -125,7 +125,9 @@ class CategoryViewModel @Inject constructor(
     }
 
     fun showDeleteConfirmation(category: Category) {
-        _showDeleteConfirmation.value = category
+        if (!category.isDefault) {
+            _showDeleteConfirmation.value = category
+        }
     }
 
     fun hideDeleteConfirmation() {
@@ -133,22 +135,17 @@ class CategoryViewModel @Inject constructor(
     }
 
     fun deleteCategory(category: Category) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
-            try {
-                // Check if it's a default category
-                if (DefaultCategories.allCategories.any { it.name == category.name }) {
-                    _error.value = "Không thể xóa danh mục mặc định"
+        if (!category.isDefault) {
+            viewModelScope.launch {
+                _isLoading.value = true
+                _error.value = null
+                try {
+                    repository.deleteCategory(category)
                     _isLoading.value = false
-                    return@launch
+                } catch (e: Exception) {
+                    _error.value = e.message
+                    _isLoading.value = false
                 }
-                repository.deleteCategory(category)
-                _isLoading.value = false
-                hideDeleteConfirmation()
-            } catch (e: Exception) {
-                _error.value = e.message
-                _isLoading.value = false
             }
         }
     }

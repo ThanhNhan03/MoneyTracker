@@ -28,7 +28,9 @@ abstract class AppModule {
             return Room.databaseBuilder(
                 context,
                 AppDatabase::class.java, "money_tracker_db"
-            ).build()
+            )
+            .fallbackToDestructiveMigration()
+            .build()
         }
 
         @Provides

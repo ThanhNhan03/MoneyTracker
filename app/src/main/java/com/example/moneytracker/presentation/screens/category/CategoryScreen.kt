@@ -3,6 +3,9 @@ package com.example.moneytracker.presentation.screens.category
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -93,9 +96,12 @@ fun CategoryScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 } else {
-                    LazyColumn(
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(vertical = 8.dp)
                     ) {
                         items(categories) { category ->
                             CategoryItem(
@@ -120,7 +126,10 @@ fun CategoryScreen(
             text = { Text(stringResource(R.string.delete_category_confirmation)) },
             confirmButton = {
                 TextButton(
-                    onClick = { viewModel.deleteCategory(category) }
+                    onClick = {
+                        viewModel.hideDeleteConfirmation()
+                        viewModel.deleteCategory(category)
+                    }
                 ) {
                     Text(stringResource(R.string.delete))
                 }
