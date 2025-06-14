@@ -25,6 +25,8 @@ import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
 import com.example.moneytracker.util.toVND
 import java.util.*
 import java.text.SimpleDateFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 import com.example.moneytracker.data.local.entities.Transaction
 
@@ -38,7 +40,10 @@ fun HomeScreen(
     val transactions by viewModel.transactions.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    val errorMessage =  stringResource(R.string.error_invalid_amount)
+    val balance by viewModel.balance.collectAsState()
     var showAddBalanceDialog by remember { mutableStateOf(false) }
+
 
     // Calculate totals
     val totalIncome = transactions
@@ -47,7 +52,7 @@ fun HomeScreen(
     val totalExpense = transactions
         .filter { it.type == "expense" }
         .sumOf { it.amount }
-    val balance = totalIncome - totalExpense
+    val currentBalance = (balance?.amount ?: 0.0) + totalIncome - totalExpense
 
     // Load transactions for the current month
     LaunchedEffect(Unit) {
@@ -108,7 +113,7 @@ fun HomeScreen(
                             color = Color.Gray
                         )
                         Text(
-                            text = balance.toVND(),
+                            text = currentBalance.toVND(),
                             style = MaterialTheme.typography.headlineMedium.copy(
                                 fontWeight = FontWeight.Bold
                             )
@@ -207,6 +212,15 @@ fun HomeScreen(
         var balanceAmount by remember { mutableStateOf("") }
         var balanceError by remember { mutableStateOf<String?>(null) }
         
+        val format = NumberFormat.getNumberInstance(Locale.getDefault())
+        val formattedAmount = try {
+            if (balanceAmount.isNotEmpty()) {
+                format.format(balanceAmount.replace(".", "").toLong())
+            } else ""
+        } catch (e: Exception) {
+            balanceAmount 
+        }
+
         AlertDialog(
             onDismissRequest = { 
                 showAddBalanceDialog = false
@@ -216,13 +230,30 @@ fun HomeScreen(
             title = { Text(stringResource(R.string.add_balance)) },
             text = {
                 Column {
+                    Text(
+                        text = stringResource(R.string.amount),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.Gray
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = formattedAmount + " đ",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
                         value = balanceAmount,
-                        onValueChange = { 
-                            balanceAmount = it
-                            balanceError = null
+                        onValueChange = { newValue ->
+                            val cleanedValue = newValue.replace(".", "") // Remove existing dots for parsing
+                            if (cleanedValue.matches(Regex("^\\d*$"))) {
+                                balanceAmount = cleanedValue
+                                balanceError = null
+                            }
                         },
-                        label = { Text(stringResource(R.string.amount)) },
+                        label = { Text(stringResource(R.string.add_balance)) },
                         singleLine = true,
                         isError = balanceError != null,
                         supportingText = {
@@ -234,36 +265,46 @@ fun HomeScreen(
                             keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
                         )
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    val quickAmounts = listOf(100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0)
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        quickAmounts.chunked(3).forEach { rowAmounts ->
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                rowAmounts.forEach { amount ->
+                                    Button(
+                                        onClick = {
+                                            balanceAmount = amount.toLong().toString()
+                                            balanceError = null
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text(text = format.format(amount))
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         try {
-                            val amount = balanceAmount.toLongOrNull()
+                            val amount = balanceAmount.replace(".", "").toLongOrNull()
                             if (amount == null || amount <= 0) {
-                                balanceError = stringResource(R.string.error_invalid_amount)
+                                balanceError = errorMessage
                                 return@TextButton
                             }
                             
-                            // Create a new transaction for the balance
-                            val transaction = Transaction(
-                                amount = amount,
-                                type = "income",
-                                category = "Balance",
-                                note = "Initial balance",
-                                date = Date()
-                            )
+                            viewModel.updateBalance(amount.toDouble())
                             
-                            // Add the transaction
-                            viewModel.addTransaction(transaction)
-                            
-                            // Close dialog and reset state
                             showAddBalanceDialog = false
                             balanceAmount = ""
                             balanceError = null
                         } catch (e: Exception) {
-                            balanceError = stringResource(R.string.error_invalid_amount)
+                            balanceError = errorMessage
                         }
                     }
                 ) {

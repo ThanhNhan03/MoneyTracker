@@ -3,7 +3,9 @@ package com.example.moneytracker.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moneytracker.domain.usecase.transaction.*
+import com.example.moneytracker.domain.usecase.balance.*
 import com.example.moneytracker.data.local.entities.Transaction
+import com.example.moneytracker.data.local.entities.Balance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,20 +17,37 @@ import javax.inject.Inject
 @HiltViewModel
 class TransactionViewModel @Inject constructor(
     private val getTransactionsUseCase: GetTransactionsUseCase,
-    private val addTransactionUseCase: AddTransactionUseCase
+    private val addTransactionUseCase: AddTransactionUseCase,
+    private val getBalanceUseCase: GetBalanceUseCase,
+    private val updateBalanceUseCase: UpdateBalanceUseCase
 ) : ViewModel() {
 
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
     val transactions: StateFlow<List<Transaction>> = _transactions
 
-    private val _transactionToEdit = MutableStateFlow<Transaction?>(null)
-    val transactionToEdit: StateFlow<Transaction?> = _transactionToEdit
+    private val _balance = MutableStateFlow<Balance?>(null)
+    val balance: StateFlow<Balance?> = _balance
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
+
+    private val _transactionToEdit = MutableStateFlow<Transaction?>(null)
+    val transactionToEdit: StateFlow<Transaction?> = _transactionToEdit
+
+    init {
+        loadBalance()
+    }
+
+    private fun loadBalance() {
+        viewModelScope.launch {
+            getBalanceUseCase().collectLatest { balance ->
+                _balance.value = balance
+            }
+        }
+    }
 
     fun loadTransactions(startDate: Date, endDate: Date) {
         viewModelScope.launch {
@@ -59,6 +78,27 @@ class TransactionViewModel @Inject constructor(
                 _error.value = e.message
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun updateBalance(amount: Double) {
+        viewModelScope.launch {
+            try {
+                val currentBalance = _balance.value
+                val balance = if (currentBalance != null) {
+                    // Update existing balance
+                    currentBalance.copy(
+                        amount = amount,
+                        lastUpdated = System.currentTimeMillis()
+                    )
+                } else {
+                    // Create new balance
+                    Balance(amount = amount)
+                }
+                updateBalanceUseCase(balance)
+            } catch (e: Exception) {
+                _error.value = e.message
             }
         }
     }

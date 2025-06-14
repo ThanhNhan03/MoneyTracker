@@ -5,10 +5,13 @@ import androidx.room.Room
 import com.example.moneytracker.data.local.AppDatabase
 import com.example.moneytracker.data.local.dao.TransactionDao
 import com.example.moneytracker.data.local.dao.CategoryDao
+import com.example.moneytracker.data.local.dao.BalanceDao
 import com.example.moneytracker.data.repository.CategoryRepositoryImpl
 import com.example.moneytracker.data.repository.TransactionRepositoryImpl
+import com.example.moneytracker.data.repository.BalanceRepositoryImpl
 import com.example.moneytracker.domain.repository.CategoryRepository
 import com.example.moneytracker.domain.repository.TransactionRepository
+import com.example.moneytracker.domain.repository.BalanceRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -38,6 +41,9 @@ abstract class AppModule {
         
         @Provides
         fun provideCategoryDao(database: AppDatabase): CategoryDao = database.categoryDao()
+
+        @Provides
+        fun provideBalanceDao(database: AppDatabase): BalanceDao = database.balanceDao()
     }
     
     @Binds
@@ -51,4 +57,10 @@ abstract class AppModule {
     abstract fun bindTransactionRepository(
         transactionRepositoryImpl: TransactionRepositoryImpl
     ): TransactionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindBalanceRepository(
+        balanceRepositoryImpl: BalanceRepositoryImpl
+    ): BalanceRepository
 }
