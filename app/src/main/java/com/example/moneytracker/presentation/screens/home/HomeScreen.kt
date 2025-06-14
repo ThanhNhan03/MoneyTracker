@@ -40,12 +40,6 @@ fun HomeScreen(
     val error by viewModel.error.collectAsState()
     var showAddBalanceDialog by remember { mutableStateOf(false) }
 
-    // Format today's date
-    val today = remember {
-        val dateFormat = SimpleDateFormat("MMMM yyyy", Locale("vi"))
-        dateFormat.format(Calendar.getInstance().time).replaceFirstChar { it.uppercase() }
-    }
-
     // Calculate totals
     val totalIncome = transactions
         .filter { it.type == "income" }
@@ -75,18 +69,9 @@ fun HomeScreen(
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically  
                 ) {
-                    Column {
-                        Text(
-                            text = today,
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
                     IconButton(
                         onClick = { showAddBalanceDialog = true }
                     ) {
@@ -220,26 +205,66 @@ fun HomeScreen(
 
     if (showAddBalanceDialog) {
         var balanceAmount by remember { mutableStateOf("") }
+        var balanceError by remember { mutableStateOf<String?>(null) }
         
         AlertDialog(
-            onDismissRequest = { showAddBalanceDialog = false },
+            onDismissRequest = { 
+                showAddBalanceDialog = false
+                balanceAmount = ""
+                balanceError = null
+            },
             title = { Text(stringResource(R.string.add_balance)) },
             text = {
-                OutlinedTextField(
-                    value = balanceAmount,
-                    onValueChange = { balanceAmount = it },
-                    label = { Text(stringResource(R.string.amount)) },
-                    singleLine = true,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
-                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                Column {
+                    OutlinedTextField(
+                        value = balanceAmount,
+                        onValueChange = { 
+                            balanceAmount = it
+                            balanceError = null
+                        },
+                        label = { Text(stringResource(R.string.amount)) },
+                        singleLine = true,
+                        isError = balanceError != null,
+                        supportingText = {
+                            if (balanceError != null) {
+                                Text(balanceError!!)
+                            }
+                        },
+                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
+                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                        )
                     )
-                )
+                }
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        // TODO: Add balance logic
-                        showAddBalanceDialog = false
+                        try {
+                            val amount = balanceAmount.toLongOrNull()
+                            if (amount == null || amount <= 0) {
+                                balanceError = stringResource(R.string.error_invalid_amount)
+                                return@TextButton
+                            }
+                            
+                            // Create a new transaction for the balance
+                            val transaction = Transaction(
+                                amount = amount,
+                                type = "income",
+                                category = "Balance",
+                                note = "Initial balance",
+                                date = Date()
+                            )
+                            
+                            // Add the transaction
+                            viewModel.addTransaction(transaction)
+                            
+                            // Close dialog and reset state
+                            showAddBalanceDialog = false
+                            balanceAmount = ""
+                            balanceError = null
+                        } catch (e: Exception) {
+                            balanceError = stringResource(R.string.error_invalid_amount)
+                        }
                     }
                 ) {
                     Icon(
@@ -253,7 +278,11 @@ fun HomeScreen(
             },
             dismissButton = {
                 TextButton(
-                    onClick = { showAddBalanceDialog = false }
+                    onClick = { 
+                        showAddBalanceDialog = false
+                        balanceAmount = ""
+                        balanceError = null
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,

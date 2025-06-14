@@ -50,6 +50,22 @@
     <string name="average">Trung bình</string>
     <string name="of_income">của thu nhập</string>
     <string name="expense_by_category">Chi tiêu theo danh mục</string>
+    <string name="select_date">Chọn ngày</string>
+    <string name="date_range">Khoảng thời gian</string>
+    <string name="start_date">Ngày bắt đầu</string>
+    <string name="end_date">Ngày kết thúc</string>
+    <string name="daily_report">Báo cáo ngày</string>
+    <string name="weekly_report">Báo cáo tuần</string>
+    <string name="yearly_report">Báo cáo năm</string>
+    <string name="custom_report">Báo cáo tùy chỉnh</string>
+    <string name="income_by_category">Thu nhập theo danh mục</string>
+    <string name="top_expense_categories">Danh mục chi tiêu nhiều nhất</string>
+    <string name="top_income_categories">Danh mục thu nhập nhiều nhất</string>
+    <string name="spending_trend">Xu hướng chi tiêu</string>
+    <string name="income_trend">Xu hướng thu nhập</string>
+    <string name="balance_trend">Xu hướng số dư</string>
+    <string name="no_transactions">Không có giao dịch nào</string>
+    <string name="select_period">Chọn kỳ báo cáo</string>
     
     <!-- Common -->
     <string name="error">Lỗi</string>
