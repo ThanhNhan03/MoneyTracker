@@ -25,4 +25,4 @@ object DefaultCategories {
     )
 
     val allCategories = expenseCategories + incomeCategories
-} 
+}
