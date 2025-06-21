@@ -13,6 +13,10 @@ class CategoryRepositoryImpl @Inject constructor(
         return categoryDao.getCategoriesByType(type)
     }
 
+    override fun getCategoryById(id: Int): Flow<Category?> {
+        return categoryDao.getCategoryById(id)
+    }
+
     override suspend fun insertCategory(category: Category) {
         categoryDao.insertCategory(category)
     }

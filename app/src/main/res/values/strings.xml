@@ -16,6 +16,10 @@
     <string name="recent_transactions">Giao dịch gần đây</string>
     <string name="add_transaction">Thêm giao dịch</string>
     <string name="add_balance">Thêm số dư</string>
+    <string name="spending_overview">Tổng quan chi tiêu</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="all_transactions">Tất cả giao dịch</string>
+    <string name="all">Tất cả</string>
     
     <!-- Transaction Screen -->
     <string name="transaction_details">Chi tiết giao dịch</string>
@@ -78,6 +82,10 @@
     <!-- Validation -->
     <string name="error_field_required">Vui lòng nhập thông tin này</string>
     <string name="error_invalid_amount">Vui lòng nhập số tiền hợp lệ</string>
+    <string name="error_category_required">Vui lòng chọn danh mục</string>
+    <string name="error_amount_required">Vui lòng nhập số tiền</string>
+    <string name="transaction_saved">Giao dịch đã được lưu</string>
+    <string name="transaction_updated">Giao dịch đã được cập nhật</string>
     <string name="error_category_exists">Danh mục này đã tồn tại</string>
 
     <string name="more_options">Thêm lựa chọn</string>

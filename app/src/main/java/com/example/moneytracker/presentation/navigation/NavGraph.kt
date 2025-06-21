@@ -13,6 +13,7 @@ import com.example.moneytracker.presentation.screens.add.AddTransactionScreen
 import com.example.moneytracker.presentation.screens.category.CategoryScreen
 import com.example.moneytracker.presentation.screens.home.HomeScreen
 import com.example.moneytracker.presentation.screens.report.ReportScreen
+import com.example.moneytracker.presentation.screens.transaction.AllTransactionsScreen
 
 sealed class Screen(
     val route: String,
@@ -21,6 +22,7 @@ sealed class Screen(
     object Home : Screen("home", R.string.transactions)
     object Reports : Screen("reports", R.string.reports)
     object Categories : Screen("categories", R.string.categories)
+    object AllTransactions : Screen("all_transactions", R.string.all_transactions)
     
     object AddTransaction : Screen("add_transaction", R.string.add_transaction) {
         const val ARG_TRANSACTION_ID = "transactionId"
@@ -63,6 +65,9 @@ private fun NavGraphBuilder.mainGraph(navController: NavController) {
                 },
                 onTransactionClick = { transaction ->
                     navController.navigate(Screen.AddTransaction.createRoute(transaction.id))
+                },
+                onSeeAllTransactionsClick = {
+                    navController.navigate(Screen.AllTransactions.route)
                 }
             )
         }
@@ -78,6 +83,15 @@ private fun NavGraphBuilder.mainGraph(navController: NavController) {
                 },
                 onCategoryClick = { categoryId ->
                     navController.navigate(Screen.AddCategory.createRoute(categoryId))
+                }
+            )
+        }
+        
+        composable(Screen.AllTransactions.route) {
+            AllTransactionsScreen(
+                onBackClick = { navController.navigateUp() },
+                onTransactionClick = { transaction ->
+                    navController.navigate(Screen.AddTransaction.createRoute(transaction.id))
                 }
             )
         }

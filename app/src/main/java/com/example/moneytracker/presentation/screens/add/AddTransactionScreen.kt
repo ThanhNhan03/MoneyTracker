@@ -2,6 +2,8 @@ package com.example.moneytracker.presentation.screens.add
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Save
@@ -13,10 +15,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.moneytracker.R
+import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
+import com.example.moneytracker.presentation.viewmodel.CategoryViewModel
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +29,8 @@ import java.util.*
 fun AddTransactionScreen(
     onBackClick: () -> Unit,
     transactionId: Int? = null,
-    viewModel: TransactionViewModel = hiltViewModel()
+    viewModel: TransactionViewModel = hiltViewModel(),
+    categoryViewModel: CategoryViewModel = hiltViewModel()
 ) {
     // Load transaction data if in edit mode
     LaunchedEffect(transactionId) {
@@ -37,6 +43,16 @@ fun AddTransactionScreen(
     var selectedCategoryName by remember { mutableStateOf("") }
     var showCategoryDialog by remember { mutableStateOf(false) }
     
+    // Load categories when type changes
+    LaunchedEffect(selectedType) {
+        categoryViewModel.loadCategories(selectedType)
+    }
+    
+    // Observe states
+    val categories by categoryViewModel.categories.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+    
     // Observe the transaction to edit
     val transactionToEdit by viewModel.transactionToEdit.collectAsState()
     
@@ -47,7 +63,26 @@ fun AddTransactionScreen(
             note = transaction.note ?: ""
             selectedType = transaction.type
             selectedCategoryId = transaction.categoryId
-            // TODO: Load category name from categoryId
+            // Find category name
+            categories.find { it.id == transaction.categoryId }?.let {
+                selectedCategoryName = it.name
+            }
+        }
+    }
+    
+    // Update category name when categories change
+    LaunchedEffect(categories, selectedCategoryId) {
+        selectedCategoryId?.let { id ->
+            categories.find { it.id == id }?.let {
+                selectedCategoryName = it.name
+            }
+        }
+    }
+    
+    // Show error message
+    LaunchedEffect(error) {
+        error?.let {
+            // TODO: Show snackbar or toast with error message
         }
     }
 
@@ -156,9 +191,37 @@ fun AddTransactionScreen(
             // Save Button
             Button(
                 onClick = {
-                    // TODO: Validate input and save transaction
+                    // Validate input
+                    val amountValue = amount.toDoubleOrNull()
+                    if (amountValue == null || amountValue <= 0) {
+                        viewModel.setError("error_invalid_amount")
+                        return@Button
+                    }
+                    if (selectedCategoryId == null) {
+                        viewModel.setError("error_category_required")
+                        return@Button
+                    }
+                    
+                    // Create transaction
+                    val transaction = Transaction(
+                        id = transactionId ?: 0,
+                        amount = amountValue,
+                        note = note.takeIf { it.isNotBlank() },
+                        date = Date(),
+                        categoryId = selectedCategoryId!!,
+                        type = selectedType
+                    )
+                    
+                    // Save transaction
+                    if (transactionId == null) {
+                        viewModel.addTransaction(transaction)
+                    } else {
+                        viewModel.updateTransaction(transaction)
+                    }
+                    
                     onBackClick()
                 },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
@@ -180,18 +243,58 @@ fun AddTransactionScreen(
     }
 
     if (showCategoryDialog) {
-        // TODO: Implement category selection dialog
-        AlertDialog(
-            onDismissRequest = { showCategoryDialog = false },
-            title = { Text(stringResource(R.string.select_category)) },
-            text = { Text(stringResource(R.string.no_data)) },
-            confirmButton = {
-                TextButton(
-                    onClick = { showCategoryDialog = false }
-                ) {
-                    Text(stringResource(R.string.ok))
-                }
-            }
+        CategorySelectionDialog(
+            categories = categories,
+            onCategorySelected = { category ->
+                selectedCategoryId = category.id
+                selectedCategoryName = category.name
+                showCategoryDialog = false
+            },
+            onDismiss = { showCategoryDialog = false }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategorySelectionDialog(
+    categories: List<com.example.moneytracker.data.local.entities.Category>,
+    onCategorySelected: (com.example.moneytracker.data.local.entities.Category) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.select_category)) },
+        text = {
+            LazyColumn {
+                items(categories) { category ->
+                    Card(
+                        onClick = { onCategorySelected(category) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = category.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.back))
+            }
+        }
+    )
 }
