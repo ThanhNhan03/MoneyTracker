@@ -78,6 +78,7 @@
     <string name="confirm">Xác nhận</string>
     <string name="cancel">Hủy</string>
     <string name="ok">OK</string>
+    <string name="filter">Lọc</string>
     
     <!-- Validation -->
     <string name="error_field_required">Vui lòng nhập thông tin này</string>

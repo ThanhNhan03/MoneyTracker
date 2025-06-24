@@ -13,7 +13,7 @@ import com.example.moneytracker.presentation.screens.add.AddTransactionScreen
 import com.example.moneytracker.presentation.screens.category.CategoryScreen
 import com.example.moneytracker.presentation.screens.home.HomeScreen
 import com.example.moneytracker.presentation.screens.report.ReportScreen
-import com.example.moneytracker.presentation.screens.transaction.AllTransactionsScreen
+import com.example.moneytracker.presentation.screens.transactions.AllTransactionsScreen
 
 sealed class Screen(
     val route: String,

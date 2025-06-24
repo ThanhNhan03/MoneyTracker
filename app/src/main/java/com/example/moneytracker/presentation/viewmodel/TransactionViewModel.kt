@@ -30,6 +30,9 @@ class TransactionViewModel @Inject constructor(
     private val _transactions = MutableStateFlow<List<Transaction>>(emptyList())
     val transactions: StateFlow<List<Transaction>> = _transactions
 
+    private val _allTransactions = MutableStateFlow<List<Transaction>>(emptyList())
+    val allTransactions: StateFlow<List<Transaction>> = _allTransactions
+
     private val _balance = MutableStateFlow<Balance?>(null)
     val balance: StateFlow<Balance?> = _balance
 
@@ -96,6 +99,25 @@ class TransactionViewModel @Inject constructor(
             try {
                 getTransactionsUseCase(startDate, endDate).collectLatest { transactions ->
                     _transactions.value = transactions
+                    _isLoading.value = false
+                }
+            } catch (e: Exception) {
+                _error.value = e.message
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun loadAllTransactions() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                // Load all transactions (from earliest date to now)
+                val earliestDate = Date(0) // January 1, 1970
+                val currentDate = Date()
+                
+                getTransactionsUseCase(earliestDate, currentDate).collectLatest { transactions ->
+                    _allTransactions.value = transactions
                     _isLoading.value = false
                 }
             } catch (e: Exception) {

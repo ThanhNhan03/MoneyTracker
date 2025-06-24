@@ -22,6 +22,8 @@ import com.example.moneytracker.presentation.components.*
 import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
 import com.example.moneytracker.util.toVND
 import java.util.*
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import com.example.moneytracker.data.local.entities.Transaction
 import android.util.Log
 
@@ -396,7 +398,7 @@ fun RecentTransactionItem(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Today", // TODO: Format actual date
+                        text = formatDateInVietnamese(transaction.date),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -416,6 +418,29 @@ fun RecentTransactionItem(
                 else 
                     Color(0xFFE74C3C)
             )
+        }
+    }
+}
+
+// Helper function to format date in Vietnamese
+private fun formatDateInVietnamese(date: Date): String {
+    val calendar = Calendar.getInstance()
+    val transactionCalendar = Calendar.getInstance()
+    transactionCalendar.time = date
+    
+    val currentDate = calendar.time
+    val daysDifference = TimeUnit.DAYS.convert(
+        currentDate.time - date.time,
+        TimeUnit.MILLISECONDS
+    )
+    
+    return when {
+        daysDifference == 0L -> "Hôm nay"
+        daysDifference == 1L -> "Hôm qua"
+        daysDifference < 7L -> "${daysDifference} ngày trước"
+        else -> {
+            val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("vi", "VN"))
+            formatter.format(date)
         }
     }
 }
