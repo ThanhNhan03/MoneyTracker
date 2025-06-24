@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.moneytracker.R
 import com.example.moneytracker.presentation.components.TransactionChart
+import com.example.moneytracker.presentation.components.DateSelector
 import com.example.moneytracker.util.toVND
 import java.time.LocalDate
 import java.time.YearMonth
@@ -26,12 +27,9 @@ fun ReportScreen(
     viewModel: TransactionViewModel = hiltViewModel()
 ) {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var showDatePicker by remember { mutableStateOf(false) }
     
     val startOfMonth = remember(selectedDate) { selectedDate.withDayOfMonth(1) }
     val endOfMonth = remember(selectedDate) { YearMonth.from(startOfMonth).atEndOfMonth() }
-    
-    val dateFormatter = remember { DateTimeFormatter.ofPattern("MMMM yyyy", Locale("vi")) }
     
     // Load transactions for selected month
     LaunchedEffect(selectedDate) {
@@ -55,18 +53,11 @@ fun ReportScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(stringResource(id = R.string.reports))
-                        TextButton(
-                            onClick = { showDatePicker = true }
-                        ) {
-                            Text(
-                                text = dateFormatter.format(startOfMonth).replaceFirstChar { it.uppercase() },
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Icon(
-                                imageVector = Icons.Default.CalendarMonth,
-                                contentDescription = stringResource(R.string.select_date)
-                            )
-                        }
+                        DateSelector(
+                            selectedDate = selectedDate,
+                            onDateSelected = { date -> selectedDate = date },
+                            showMonthYear = true
+                        )
                     }
                 }
             )
@@ -172,47 +163,6 @@ fun ReportScreen(
                     .fillMaxWidth()
                     .height(200.dp)
             )
-        }
-    }
-
-    if (showDatePicker) {
-        val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedDate
-                .atStartOfDay()
-                .toInstant(java.time.ZoneOffset.UTC)
-                .toEpochMilli()
-        )
-        
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { millis ->
-                            val calendar = Calendar.getInstance().apply {
-                                timeInMillis = millis
-                            }
-                            selectedDate = LocalDate.of(
-                                calendar.get(Calendar.YEAR),
-                                calendar.get(Calendar.MONTH) + 1,
-                                1
-                            )
-                        }
-                        showDatePicker = false
-                    }
-                ) {
-                    Text(stringResource(R.string.ok))
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showDatePicker = false }
-                ) {
-                    Text(stringResource(R.string.cancel))
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
         }
     }
 }
