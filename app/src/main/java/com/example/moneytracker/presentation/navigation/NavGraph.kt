@@ -12,7 +12,7 @@ import com.example.moneytracker.presentation.screens.add.AddCategoryScreen
 import com.example.moneytracker.presentation.screens.add.AddTransactionScreen
 import com.example.moneytracker.presentation.screens.category.CategoryScreen
 import com.example.moneytracker.presentation.screens.home.HomeScreen
-import com.example.moneytracker.presentation.screens.report.ReportScreen
+import com.example.moneytracker.presentation.screens.report.ReportScreenWithAi
 import com.example.moneytracker.presentation.screens.transactions.AllTransactionsScreen
 
 sealed class Screen(
@@ -73,7 +73,7 @@ private fun NavGraphBuilder.mainGraph(navController: NavController) {
         }
         
         composable(Screen.Reports.route) {
-            ReportScreen()
+            ReportScreenWithAi()
         }
         
         composable(Screen.Categories.route) {

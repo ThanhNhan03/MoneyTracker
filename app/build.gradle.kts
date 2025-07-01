@@ -110,6 +110,10 @@ dependencies {
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
     
+    // Network for AI integration
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("org.json:json:20231013")
+    
     // Testing
     testImplementation(libs.findLibrary("junit").get())
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

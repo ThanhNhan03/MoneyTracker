@@ -1,6 +1,7 @@
 package com.example.moneytracker.domain.repository
 
 import com.example.moneytracker.data.local.entities.Transaction
+import com.example.moneytracker.data.local.entities.MonthlyStatistics
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
@@ -11,4 +12,5 @@ interface TransactionRepository {
     suspend fun updateTransaction(transaction: Transaction)
     suspend fun deleteTransaction(transaction: Transaction)
     fun getTotalAmountByTypeAndDateRange(type: String, startDate: Date, endDate: Date): Flow<Double?>
+    suspend fun getMonthlyStatistics(startDate: Date, endDate: Date): List<MonthlyStatistics>
 }

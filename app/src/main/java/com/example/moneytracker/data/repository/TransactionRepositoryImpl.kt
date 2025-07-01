@@ -2,6 +2,7 @@ package com.example.moneytracker.data.repository
 
 import com.example.moneytracker.data.local.dao.TransactionDao
 import com.example.moneytracker.data.local.entities.Transaction
+import com.example.moneytracker.data.local.entities.MonthlyStatistics
 import com.example.moneytracker.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import java.util.*
@@ -40,5 +41,9 @@ class TransactionRepositoryImpl @Inject constructor(
         endDate: Date
     ): Flow<Double?> {
         return transactionDao.getTotalAmountByTypeAndDateRange(type, startDate, endDate)
+    }
+
+    override suspend fun getMonthlyStatistics(startDate: Date, endDate: Date): List<MonthlyStatistics> {
+        return transactionDao.getMonthlyStatistics(startDate, endDate)
     }
 }
