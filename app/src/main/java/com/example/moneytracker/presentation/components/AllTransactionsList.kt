@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.moneytracker.data.local.entities.Category
 import com.example.moneytracker.data.local.entities.Transaction
+import com.example.moneytracker.ui.theme.*
 import com.example.moneytracker.util.toVND
 import com.example.moneytracker.util.DateUtils
 import java.text.SimpleDateFormat
@@ -67,7 +68,7 @@ fun AllTransactionsList(
                             style = MaterialTheme.typography.titleSmall.copy(
                                 fontWeight = FontWeight.Medium
                             ),
-                            color = if (dayTotal >= 0) Color(0xFF27AE60) else Color(0xFFE74C3C)
+                            color = if (dayTotal >= 0) IncomeGreen else ExpenseRed
                         )
                     }
                 }

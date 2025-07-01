@@ -4,11 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.moneytracker.R
+import com.example.moneytracker.ui.theme.IncomeGreen
+import com.example.moneytracker.ui.theme.ExpenseRed
 import com.example.moneytracker.util.toVND
 
 @Composable
@@ -23,31 +24,31 @@ fun BalanceCard(
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 0.dp
+            defaultElevation = 8.dp
         )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(20.dp)
         ) {
             Text(
                 text = stringResource(R.string.total_balance),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = currentBalance.toVND(),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                color = Color.White
+                color = MaterialTheme.colorScheme.onSurface
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -57,31 +58,31 @@ fun BalanceCard(
                     Text(
                         text = stringResource(R.string.income),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = totalIncome.toVND(),
                         style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF4CAF50) // Brighter green for better visibility on primary background
-                        )
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = IncomeGreen
                     )
                 }
                 Column {
                     Text(
                         text = stringResource(R.string.expenses),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.8f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = totalExpense.toVND(),
                         style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFF5722) // Brighter red for better visibility on primary background
-                        )
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = ExpenseRed
                     )
                 }
             }
         }
     }
-} 
+}

@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.moneytracker.data.local.entities.Category
 import com.example.moneytracker.data.local.entities.Transaction
+import com.example.moneytracker.ui.theme.*
 import com.example.moneytracker.util.toVND
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,9 +51,9 @@ fun TransactionItemCard(
                     modifier = Modifier.size(40.dp),
                     shape = CircleShape,
                     color = if (transaction.type == "income") 
-                        Color(0xFF27AE60).copy(alpha = 0.2f) 
+                        IncomeGreen.copy(alpha = 0.2f) 
                     else 
-                        Color(0xFFE74C3C).copy(alpha = 0.2f)
+                        ExpenseRed.copy(alpha = 0.2f)
                 ) {
                     Icon(
                         imageVector = if (transaction.type == "income") 
@@ -61,9 +62,9 @@ fun TransactionItemCard(
                             Icons.Default.TrendingDown,
                         contentDescription = null,
                         tint = if (transaction.type == "income") 
-                            Color(0xFF27AE60) 
+                            IncomeGreen 
                         else 
-                            Color(0xFFE74C3C),
+                            ExpenseRed,
                         modifier = Modifier.padding(8.dp)
                     )
                 }
@@ -96,9 +97,9 @@ fun TransactionItemCard(
                     fontWeight = FontWeight.Bold
                 ),
                 color = if (transaction.type == "income") 
-                    Color(0xFF27AE60) 
+                    IncomeGreen 
                 else 
-                    Color(0xFFE74C3C)
+                    ExpenseRed
             )
         }
     }

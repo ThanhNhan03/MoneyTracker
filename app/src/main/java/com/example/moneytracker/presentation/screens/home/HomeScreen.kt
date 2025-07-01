@@ -21,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.moneytracker.R
 import com.example.moneytracker.presentation.components.*
 import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
+import com.example.moneytracker.ui.theme.*
 import com.example.moneytracker.util.toVND
 import java.util.*
 import java.text.SimpleDateFormat
@@ -101,7 +102,7 @@ fun HomeScreen(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.add_transaction),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -111,7 +112,9 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         } else if (error != null) {
             Box(
@@ -120,7 +123,8 @@ fun HomeScreen(
             ) {
                 Text(
                     text = stringResource(R.string.error) + ": ${error}",
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyLarge
                 )
             }
         } else {
@@ -219,9 +223,9 @@ fun SpendingOverviewSection(
                     amount = amount,
                     percentage = percentage,
                     color = when (topCategories.indexOf(categoryId to amount)) {
-                        0 -> Color(0xFF8E44AD) // Purple
-                        1 -> Color(0xFF3498DB) // Blue
-                        else -> Color(0xFF9B59B6) // Light purple
+                        0 -> CategoryColor1 // Pink
+                        1 -> CategoryColor4 // Indigo
+                        else -> CategoryColor2 // Purple
                     }
                 )
                 
@@ -324,7 +328,7 @@ fun RecentTransactionsSection(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Chưa có giao dịch nào trong tháng $currentMonth",
+                        text = "Chưa có giao dịch nào trong  $currentMonth",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -385,9 +389,9 @@ fun RecentTransactionItem(
                         .size(32.dp),
                     shape = CircleShape,
                     color = if (transaction.type == "income") 
-                        Color(0xFF27AE60).copy(alpha = 0.2f) 
+                        IncomeGreen.copy(alpha = 0.2f) 
                     else 
-                        Color(0xFFE74C3C).copy(alpha = 0.2f)
+                        ExpenseRed.copy(alpha = 0.2f)
                 ) {
                     Icon(
                         imageVector = if (transaction.type == "income") 
@@ -396,9 +400,9 @@ fun RecentTransactionItem(
                             Icons.Default.Remove,
                         contentDescription = null,
                         tint = if (transaction.type == "income") 
-                            Color(0xFF27AE60) 
+                            IncomeGreen 
                         else 
-                            Color(0xFFE74C3C),
+                            ExpenseRed,
                         modifier = Modifier
                             .size(20.dp)
                             .padding(4.dp)
@@ -432,10 +436,11 @@ fun RecentTransactionItem(
                     fontWeight = FontWeight.Bold
                 ),
                 color = if (transaction.type == "income") 
-                    Color(0xFF27AE60) 
+                    IncomeGreen 
                 else 
-                    Color(0xFFE74C3C)
+                    ExpenseRed
             )
+
         }
     }
 }
@@ -490,7 +495,7 @@ fun NoExpenseDataCard() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Chưa có chi tiêu nào trong tháng $currentMonth",
+                text = "Chưa có chi tiêu nào trong  $currentMonth",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

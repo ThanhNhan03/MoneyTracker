@@ -24,6 +24,7 @@ import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
 import com.example.moneytracker.data.remote.GeminiAiService
 import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.data.local.entities.Category
+import com.example.moneytracker.ui.theme.*
 import com.example.moneytracker.util.toVND
 import java.time.LocalDate
 import java.time.YearMonth
@@ -212,7 +213,7 @@ private fun SummaryCards(
             Card(
                 modifier = Modifier.weight(1f),
                 colors = CardDefaults.cardColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFF34A853).copy(alpha = 0.1f)
+                    containerColor = IncomeGreen.copy(alpha = 0.1f)
                 )
             ) {
                 Column(
@@ -229,7 +230,7 @@ private fun SummaryCards(
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         ),
-                        color = androidx.compose.ui.graphics.Color(0xFF34A853)
+                        color = IncomeGreen
                     )
                 }
             }
@@ -238,7 +239,7 @@ private fun SummaryCards(
             Card(
                 modifier = Modifier.weight(1f),
                 colors = CardDefaults.cardColors(
-                    containerColor = androidx.compose.ui.graphics.Color(0xFFEA4335).copy(alpha = 0.1f)
+                    containerColor = ExpenseRed.copy(alpha = 0.1f)
                 )
             ) {
                 Column(
@@ -255,7 +256,7 @@ private fun SummaryCards(
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         ),
-                        color = androidx.compose.ui.graphics.Color(0xFFEA4335)
+                        color = ExpenseRed
                     )
                 }
             }
@@ -266,9 +267,9 @@ private fun SummaryCards(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = if (balance >= 0) 
-                    androidx.compose.ui.graphics.Color(0xFF4285F4).copy(alpha = 0.1f)
+                    Primary.copy(alpha = 0.1f)
                 else 
-                    androidx.compose.ui.graphics.Color(0xFFEA4335).copy(alpha = 0.1f)
+                    ExpenseRed.copy(alpha = 0.1f)
             )
         ) {
             Column(
@@ -286,9 +287,9 @@ private fun SummaryCards(
                         fontWeight = FontWeight.Bold
                     ),
                     color = if (balance >= 0) 
-                        androidx.compose.ui.graphics.Color(0xFF4285F4)
+                        Primary
                     else 
-                        androidx.compose.ui.graphics.Color(0xFFEA4335)
+                        ExpenseRed
                 )
                 if (totalIncome > 0) {
                     val percentage = (balance / totalIncome * 100).toInt()

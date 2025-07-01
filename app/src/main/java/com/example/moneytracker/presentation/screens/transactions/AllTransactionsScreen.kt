@@ -15,6 +15,7 @@ import com.example.moneytracker.R
 import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.presentation.components.*
 import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
+import com.example.moneytracker.ui.theme.*
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
@@ -189,13 +190,15 @@ fun AllTransactionsScreen(
                     }
                 }            }
 
-            when {
+                when {
                 isLoading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
                 }                error != null -> {
                     Box(
