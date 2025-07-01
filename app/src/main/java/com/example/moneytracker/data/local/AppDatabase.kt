@@ -5,17 +5,15 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.moneytracker.data.local.dao.BalanceDao
 import com.example.moneytracker.data.local.dao.CategoryDao
 import com.example.moneytracker.data.local.dao.TransactionDao
-import com.example.moneytracker.data.local.entities.Balance
 import com.example.moneytracker.data.local.entities.Category
 import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.util.Converters
 
 @Database(
-    entities = [Transaction::class, Category::class, Balance::class],
-    version = 3,
+    entities = [Transaction::class, Category::class],
+    version = 4,
     exportSchema = false,
     autoMigrations = []
 )
@@ -23,7 +21,6 @@ import com.example.moneytracker.util.Converters
 abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun categoryDao(): CategoryDao
-    abstract fun balanceDao(): BalanceDao
 
     companion object {
         @Volatile

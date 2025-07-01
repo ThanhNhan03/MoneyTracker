@@ -23,10 +23,10 @@ fun BalanceCard(
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = Color.Transparent
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
+            defaultElevation = 0.dp
         )
     ) {
         Column(
@@ -37,13 +37,14 @@ fun BalanceCard(
             Text(
                 text = stringResource(R.string.total_balance),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+                color = Color.White.copy(alpha = 0.8f)
             )
             Text(
                 text = currentBalance.toVND(),
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                color = Color.White
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -56,13 +57,13 @@ fun BalanceCard(
                     Text(
                         text = stringResource(R.string.income),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
+                        color = Color.White.copy(alpha = 0.8f)
                     )
                     Text(
                         text = totalIncome.toVND(),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = Color.Green
+                            color = Color(0xFF4CAF50) // Brighter green for better visibility on primary background
                         )
                     )
                 }
@@ -70,13 +71,13 @@ fun BalanceCard(
                     Text(
                         text = stringResource(R.string.expenses),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray
+                        color = Color.White.copy(alpha = 0.8f)
                     )
                     Text(
                         text = totalExpense.toVND(),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
-                            color = Color.Red
+                            color = Color(0xFFFF5722) // Brighter red for better visibility on primary background
                         )
                     )
                 }

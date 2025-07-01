@@ -3,10 +3,8 @@ package com.example.moneytracker.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moneytracker.domain.usecase.transaction.*
-import com.example.moneytracker.domain.usecase.balance.*
 import com.example.moneytracker.domain.repository.CategoryRepository
 import com.example.moneytracker.data.local.entities.Transaction
-import com.example.moneytracker.data.local.entities.Balance
 import com.example.moneytracker.data.local.entities.Category
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +20,6 @@ class TransactionViewModel @Inject constructor(
     private val getTransactionsUseCase: GetTransactionsUseCase,
     private val addTransactionUseCase: AddTransactionUseCase,
     private val updateTransactionUseCase: UpdateTransactionUseCase,
-    private val getBalanceUseCase: GetBalanceUseCase,
-    private val updateBalanceUseCase: UpdateBalanceUseCase,
     private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
@@ -32,9 +28,6 @@ class TransactionViewModel @Inject constructor(
 
     private val _allTransactions = MutableStateFlow<List<Transaction>>(emptyList())
     val allTransactions: StateFlow<List<Transaction>> = _allTransactions
-
-    private val _balance = MutableStateFlow<Balance?>(null)
-    val balance: StateFlow<Balance?> = _balance
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())
     val categories: StateFlow<List<Category>> = _categories
@@ -49,16 +42,7 @@ class TransactionViewModel @Inject constructor(
     val transactionToEdit: StateFlow<Transaction?> = _transactionToEdit
 
     init {
-        loadBalance()
         loadAllCategoriesInit()
-    }
-
-    private fun loadBalance() {
-        viewModelScope.launch {
-            getBalanceUseCase().collectLatest { balance ->
-                _balance.value = balance
-            }
-        }
     }
 
     fun loadAllCategories() {
@@ -145,49 +129,11 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
-    fun updateBalance(amount: Double) {
-        viewModelScope.launch {
-            try {
-                val currentBalance = _balance.value
-                val balance = if (currentBalance != null) {
-                    // Update existing balance
-                    currentBalance.copy(
-                        amount = amount,
-                        lastUpdated = System.currentTimeMillis()
-                    )
-                } else {
-                    // Create new balance
-                    Balance(amount = amount)
-                }
-                updateBalanceUseCase(balance)
-            } catch (e: Exception) {
-                _error.value = e.message
-            }
-        }
-    }
-
     fun addTransaction(transaction: Transaction) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
                 addTransactionUseCase(transaction)
-                
-                // Update balance based on transaction type
-                val currentBalance = _balance.value
-                if (currentBalance != null) {
-                    val newAmount = if (transaction.type == "income") {
-                        currentBalance.amount + transaction.amount
-                    } else {
-                        currentBalance.amount - transaction.amount
-                    }
-                    
-                    val updatedBalance = currentBalance.copy(
-                        amount = newAmount,
-                        lastUpdated = System.currentTimeMillis()
-                    )
-                    updateBalanceUseCase(updatedBalance)
-                }
-                
                 _isLoading.value = false
             } catch (e: Exception) {
                 _error.value = e.message
@@ -201,37 +147,8 @@ class TransactionViewModel @Inject constructor(
             try {
                 _isLoading.value = true
                 
-                // Get old transaction to calculate balance difference
-                val oldTransaction = _transactions.value.find { it.id == transaction.id }
-                
                 // Update transaction in database
                 updateTransactionUseCase(transaction)
-                
-                // Update balance if old transaction exists
-                if (oldTransaction != null) {
-                    val currentBalance = _balance.value
-                    if (currentBalance != null) {
-                        // Reverse old transaction effect
-                        var newAmount = if (oldTransaction.type == "income") {
-                            currentBalance.amount - oldTransaction.amount
-                        } else {
-                            currentBalance.amount + oldTransaction.amount
-                        }
-                        
-                        // Apply new transaction effect
-                        newAmount = if (transaction.type == "income") {
-                            newAmount + transaction.amount
-                        } else {
-                            newAmount - transaction.amount
-                        }
-                        
-                        val updatedBalance = currentBalance.copy(
-                            amount = newAmount,
-                            lastUpdated = System.currentTimeMillis()
-                        )
-                        updateBalanceUseCase(updatedBalance)
-                    }
-                }
                 
                 // Update local state
                 _transactions.value = _transactions.value.map { 

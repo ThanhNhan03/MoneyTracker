@@ -15,7 +15,6 @@
     <string name="expenses">Chi tiêu</string>
     <string name="recent_transactions">Giao dịch gần đây</string>
     <string name="add_transaction">Thêm giao dịch</string>
-    <string name="add_balance">Thêm số dư</string>
     <string name="spending_overview">Tổng quan chi tiêu</string>
     <string name="see_all">Xem tất cả</string>
     <string name="all_transactions">Tất cả giao dịch</string>
@@ -67,7 +66,6 @@
     <string name="top_income_categories">Danh mục thu nhập nhiều nhất</string>
     <string name="spending_trend">Xu hướng chi tiêu</string>
     <string name="income_trend">Xu hướng thu nhập</string>
-    <string name="balance_trend">Xu hướng số dư</string>
     <string name="no_transactions">Không có giao dịch nào</string>
     <string name="select_period">Chọn kỳ báo cáo</string>
     

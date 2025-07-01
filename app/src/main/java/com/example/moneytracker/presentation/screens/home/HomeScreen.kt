@@ -4,9 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.moneytracker.R
@@ -38,9 +39,6 @@ fun HomeScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     val categories by viewModel.categories.collectAsState()
-    val errorMessage = stringResource(R.string.error_invalid_amount)
-    val balance by viewModel.balance.collectAsState()
-    var showAddBalanceDialog by remember { mutableStateOf(false) }
 
     // Calculate totals from current month transactions only
     val totalIncome = transactions
@@ -50,17 +48,40 @@ fun HomeScreen(
         .filter { it.type == "expense" }
         .sumOf { it.amount }
     
-    // Current balance is the balance from database (which includes all transactions)
-    val currentBalance = balance?.amount ?: 0.0    // Load transactions for the current month
+    // Current balance = income - expense for current month (like in ReportScreen)
+    val currentBalance = totalIncome - totalExpense    // Load transactions for the current month
     LaunchedEffect(Unit) {
         val calendar = Calendar.getInstance()
         val startDate = calendar.apply {
             set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }.time
-        val endDate = Calendar.getInstance().time
+        val endDate = calendar.apply {
+            set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            set(Calendar.MILLISECOND, 999)
+        }.time
+        
+        Log.d("HomeScreen", "Loading transactions from ${startDate} to ${endDate}")
         viewModel.loadTransactions(startDate, endDate)
         // Force reload categories to ensure they're available
         viewModel.loadAllCategories()
+    }
+    
+    // Debug transactions
+    LaunchedEffect(transactions) {
+        Log.d("HomeScreen", "Transactions loaded: ${transactions.size}")
+        Log.d("HomeScreen", "Total Income: $totalIncome")
+        Log.d("HomeScreen", "Total Expense: $totalExpense") 
+        Log.d("HomeScreen", "Current Balance: $currentBalance")
+        transactions.forEach { transaction ->
+            Log.d("HomeScreen", "Transaction: ${transaction.note} - ${transaction.amount} - ${transaction.date} - ${transaction.type}")
+        }
     }
     
     // Debug categories
@@ -70,50 +91,8 @@ fun HomeScreen(
             Log.d("HomeScreen", "Category: id=${category.id}, name=${category.name}, type=${category.type}")
         }
     }
-    
-    // Refresh transactions when balance changes (indicating new transaction)
-    LaunchedEffect(balance) {
-        val calendar = Calendar.getInstance()
-        val startDate = calendar.apply {
-            set(Calendar.DAY_OF_MONTH, 1)
-        }.time
-        val endDate = Calendar.getInstance().time
-        viewModel.loadTransactions(startDate, endDate)
-    }
 
     Scaffold(
-        topBar = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(16.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically  
-                ) {
-                    IconButton(
-                        onClick = { showAddBalanceDialog = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountBalance,
-                            contentDescription = stringResource(R.string.add_balance),
-                            tint = Color.White
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(24.dp))
-                
-                BalanceCard(
-                    currentBalance = currentBalance,
-                    totalIncome = totalIncome,
-                    totalExpense = totalExpense
-                )
-            }
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTransactionClick,
@@ -125,7 +104,8 @@ fun HomeScreen(
                     tint = Color.White
                 )
             }
-        }    ) { padding ->
+        }
+    ) { padding ->
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -150,13 +130,37 @@ fun HomeScreen(
                     .padding(padding),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {                // Spending Overview Section
+            ) {
+                // Balance Card Section - now scrollable
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            .padding(16.dp)
+                    ) {
+                        BalanceCard(
+                            currentBalance = currentBalance,
+                            totalIncome = totalIncome,
+                            totalExpense = totalExpense
+                        )
+                    }
+                }
+
+                // Spending Overview Section
                 if (transactions.filter { it.type == "expense" }.isNotEmpty()) {
                     item {
                         SpendingOverviewSection(
                             expenseTransactions = transactions.filter { it.type == "expense" },
                             categories = categories
                         )
+                    }
+                } else {
+                    item {
+                        NoExpenseDataCard()
                     }
                 }
                   // Recent Transactions Section
@@ -170,14 +174,6 @@ fun HomeScreen(
                 }
             }
         }
-    }
-
-    if (showAddBalanceDialog) {
-        AddBalanceDialog(
-            onDismiss = { showAddBalanceDialog = false },
-            onSave = { amount -> viewModel.updateBalance(amount) },
-            errorMessage = errorMessage
-        )
     }
 }
 
@@ -314,12 +310,34 @@ fun RecentTransactionsSection(
             Spacer(modifier = Modifier.height(12.dp))
             
             if (transactions.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.no_transactions),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )            } else {
+                val currentMonth = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale("vi", "VN"))
+                    .format(java.util.Date())
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "📝",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Chưa có giao dịch nào trong tháng $currentMonth",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Nhấn nút + để thêm giao dịch đầu tiên!",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            } else {
                 transactions.forEach { transaction ->
                     RecentTransactionItem(
                         transaction = transaction,
@@ -441,6 +459,49 @@ private fun formatDateInVietnamese(date: Date): String {
         else -> {
             val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("vi", "VN"))
             formatter.format(date)
+        }
+    }
+}
+
+@Composable
+fun NoExpenseDataCard() {
+    val currentMonth = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale("vi", "VN"))
+        .format(java.util.Date())
+    
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "📊",
+                style = MaterialTheme.typography.displaySmall
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.spending_overview),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Chưa có chi tiêu nào trong tháng $currentMonth",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Hãy bắt đầu ghi chép để theo dõi chi tiêu!",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
