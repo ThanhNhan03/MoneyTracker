@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class TransactionViewModel @Inject constructor(
@@ -132,10 +133,13 @@ class TransactionViewModel @Inject constructor(
     fun addTransaction(transaction: Transaction) {
         viewModelScope.launch {
             try {
+                Log.d("TransactionViewModel", "Adding transaction: $transaction")
                 _isLoading.value = true
                 addTransactionUseCase(transaction)
+                Log.d("TransactionViewModel", "Transaction added successfully")
                 _isLoading.value = false
             } catch (e: Exception) {
+                Log.e("TransactionViewModel", "Error adding transaction", e)
                 _error.value = e.message
                 _isLoading.value = false
             }

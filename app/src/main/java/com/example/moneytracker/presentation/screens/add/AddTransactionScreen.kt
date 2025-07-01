@@ -30,7 +30,9 @@ import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.presentation.viewmodel.TransactionViewModel
 import com.example.moneytracker.presentation.viewmodel.CategoryViewModel
 import com.example.moneytracker.ui.theme.*
+import com.example.moneytracker.util.NumberFormatter
 import java.util.*
+import android.util.Log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +69,7 @@ fun AddTransactionScreen(
     // Update UI when transaction data is loaded
     LaunchedEffect(transactionToEdit) {
         transactionToEdit?.let { transaction ->
-            amount = transaction.amount.toString()
+            amount = NumberFormatter.formatNumber(transaction.amount.toString())
             note = transaction.note ?: ""
             selectedType = transaction.type
             selectedCategoryId = transaction.categoryId
@@ -113,7 +115,7 @@ fun AddTransactionScreen(
             )
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -121,65 +123,67 @@ fun AddTransactionScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // Transaction Type Selection - Modern Card Style
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(
-                        text = "Loại giao dịch",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    Column(
+                        modifier = Modifier.padding(20.dp)
                     ) {
-                        listOf(
-                            "expense" to stringResource(R.string.expense),
-                            "income" to stringResource(R.string.income)
-                        ).forEach { (type, label) ->
-                            Card(
-                                onClick = { selectedType = type },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(56.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = if (type == selectedType) {
-                                        if (type == "income") IncomeGreen else ExpenseRed
-                                    } else {
-                                        MaterialTheme.colorScheme.surface
-                                    }
-                                ),
-                                border = if (type == selectedType) null else BorderStroke(
-                                    1.dp, 
-                                    MaterialTheme.colorScheme.outline
-                                )
-                            ) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = label,
-                                        style = MaterialTheme.typography.bodyLarge.copy(
-                                            fontWeight = FontWeight.Medium
-                                        ),
-                                        color = if (type == selectedType) {
-                                            Color.White
+                        Text(
+                            text = "Loại giao dịch",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                        
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            listOf(
+                                "expense" to stringResource(R.string.expense),
+                                "income" to stringResource(R.string.income)
+                            ).forEach { (type, label) ->
+                                Card(
+                                    onClick = { selectedType = type },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(56.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = if (type == selectedType) {
+                                            if (type == "income") IncomeGreen else ExpenseRed
                                         } else {
-                                            MaterialTheme.colorScheme.onSurface
+                                            MaterialTheme.colorScheme.surface
                                         }
+                                    ),
+                                    border = if (type == selectedType) null else BorderStroke(
+                                        1.dp, 
+                                        MaterialTheme.colorScheme.outline
                                     )
+                                ) {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = label,
+                                            style = MaterialTheme.typography.bodyLarge.copy(
+                                                fontWeight = FontWeight.Medium
+                                            ),
+                                            color = if (type == selectedType) {
+                                                Color.White
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurface
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -188,213 +192,248 @@ fun AddTransactionScreen(
             }
 
             // Amount Input - Enhanced
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(
-                        text = "Số tiền",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-                    
-                    OutlinedTextField(
-                        value = amount,
-                        onValueChange = { amount = it },
-                        label = { Text("Nhập số tiền") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
-                            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
-                        ),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.AttachMoney,
-                                contentDescription = "Số tiền",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            focusedLabelColor = MaterialTheme.colorScheme.primary
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Số tiền",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = 12.dp)
                         )
-                    )
+                        
+                        OutlinedTextField(
+                            value = amount,
+                            onValueChange = { newValue ->
+                                // Only allow digits and format with commas
+                                val digitsOnly = newValue.replace(Regex("[^\\d]"), "")
+                                if (digitsOnly.length <= 12) { // Limit to reasonable number length
+                                    amount = if (digitsOnly.isNotEmpty()) {
+                                        NumberFormatter.formatNumber(digitsOnly)
+                                    } else {
+                                        ""
+                                    }
+                                }
+                            },
+                            label = { Text("Nhập số tiền") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions.Default.copy(
+                                keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                            ),
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.AttachMoney,
+                                    contentDescription = "Số tiền",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                focusedLabelColor = MaterialTheme.colorScheme.primary
+                            ),
+                            placeholder = { Text("0") }
+                        )
+                    }
                 }
             }
 
             // Category Selection - Enhanced
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(
-                        text = "Danh mục",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-                    
-                    OutlinedButton(
-                        onClick = { showCategoryDialog = true },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        border = BorderStroke(
-                            1.dp, 
-                            if (selectedCategoryId != null) MaterialTheme.colorScheme.primary 
-                            else MaterialTheme.colorScheme.outline
-                        )
+                    Column(
+                        modifier = Modifier.padding(20.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Category,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = if (selectedCategoryId != null) MaterialTheme.colorScheme.primary 
-                                   else MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = selectedCategoryName.ifEmpty { "Chọn danh mục" },
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = if (selectedCategoryId != null) MaterialTheme.colorScheme.primary 
-                                   else MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "Danh mục",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = 12.dp)
                         )
+                        
+                        OutlinedButton(
+                            onClick = { showCategoryDialog = true },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
+                            border = BorderStroke(
+                                1.dp, 
+                                if (selectedCategoryId != null) MaterialTheme.colorScheme.primary 
+                                else MaterialTheme.colorScheme.outline
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Category,
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = if (selectedCategoryId != null) MaterialTheme.colorScheme.primary 
+                                       else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = selectedCategoryName.ifEmpty { "Chọn danh mục" },
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = if (selectedCategoryId != null) MaterialTheme.colorScheme.primary 
+                                       else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
 
             // Note Input - Enhanced
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(20.dp)
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    Text(
-                        text = "Ghi chú",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-                    
-                    OutlinedTextField(
-                        value = note,
-                        onValueChange = { note = it },
-                        label = { Text("Ghi chú (không bắt buộc)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = false,
-                        minLines = 3,
-                        maxLines = 4,
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Note,
-                                contentDescription = "Ghi chú",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            focusedLabelColor = MaterialTheme.colorScheme.primary
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        Text(
+                            text = "Ghi chú",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(bottom = 12.dp)
                         )
-                    )
+                        
+                        OutlinedTextField(
+                            value = note,
+                            onValueChange = { note = it },
+                            label = { Text("Ghi chú (không bắt buộc)") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = false,
+                            minLines = 3,
+                            maxLines = 4,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Note,
+                                    contentDescription = "Ghi chú",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                focusedLabelColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
                 }
             }
 
             // Save Button - Enhanced
-            Button(
-                onClick = {
-                    // Validate input
-                    val amountValue = amount.toDoubleOrNull()
-                    if (amountValue == null || amountValue <= 0) {
-                        viewModel.setError("error_invalid_amount")
-                        return@Button
-                    }
-                    if (selectedCategoryId == null) {
-                        viewModel.setError("error_category_required")
-                        return@Button
-                    }
-                    
-                    // Create transaction
-                    val transaction = Transaction(
-                        id = transactionId ?: 0,
-                        amount = amountValue,
-                        note = note.takeIf { it.isNotBlank() },
-                        date = Date(),
-                        categoryId = selectedCategoryId!!,
-                        type = selectedType
-                    )
-                    
-                    // Save transaction
-                    if (transactionId == null) {
-                        viewModel.addTransaction(transaction)
-                    } else {
-                        viewModel.updateTransaction(transaction)
-                    }
-                    
-                    onBackClick()
-                },
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                shape = RoundedCornerShape(16.dp),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 4.dp
-                )
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Save,
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = if (transactionId != null) 
-                            stringResource(R.string.update)
-                        else 
-                            stringResource(R.string.save),
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = FontWeight.Bold
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        Log.d("AddTransaction", "Save button clicked")
+                        Log.d("AddTransaction", "Amount input: '$amount'")
+                        Log.d("AddTransaction", "Selected category ID: $selectedCategoryId")
+                        
+                        // Validate input
+                        val amountValue = NumberFormatter.getDoubleValue(amount)
+                        Log.d("AddTransaction", "Parsed amount value: $amountValue")
+                        
+                        if (amountValue == null || amountValue <= 0) {
+                            Log.e("AddTransaction", "Invalid amount: $amountValue")
+                            viewModel.setError("error_invalid_amount")
+                            return@Button
+                        }
+                        if (selectedCategoryId == null) {
+                            Log.e("AddTransaction", "No category selected")
+                            viewModel.setError("error_category_required")
+                            return@Button
+                        }
+                        
+                        Log.d("AddTransaction", "Creating transaction with amount: $amountValue, category: $selectedCategoryId, type: $selectedType")
+                        
+                        // Create transaction
+                        val transaction = Transaction(
+                            id = transactionId ?: 0,
+                            amount = amountValue,
+                            note = note.takeIf { it.isNotBlank() },
+                            date = Date(),
+                            categoryId = selectedCategoryId!!,
+                            type = selectedType
                         )
+                        
+                        Log.d("AddTransaction", "Transaction created: $transaction")
+                        
+                        // Save transaction
+                        if (transactionId == null) {
+                            Log.d("AddTransaction", "Adding new transaction")
+                            viewModel.addTransaction(transaction)
+                        } else {
+                            Log.d("AddTransaction", "Updating existing transaction")
+                            viewModel.updateTransaction(transaction)
+                        }
+                        
+                        Log.d("AddTransaction", "Calling onBackClick")
+                        onBackClick()
+                    },
+                    enabled = !isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = ButtonDefaults.buttonElevation(
+                        defaultElevation = 8.dp,
+                        pressedElevation = 4.dp
                     )
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Save,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = if (transactionId != null) 
+                                stringResource(R.string.update)
+                            else 
+                                stringResource(R.string.save),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
                 }
             }
         }

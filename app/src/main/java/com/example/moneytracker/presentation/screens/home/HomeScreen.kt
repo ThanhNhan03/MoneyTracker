@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.TrendingUp
+import androidx.compose.material.icons.filled.TrendingDown
+import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -461,7 +464,7 @@ private fun formatDateInVietnamese(date: Date): String {
     return when {
         daysDifference == 0L -> "Hôm nay"
         daysDifference == 1L -> "Hôm qua"
-        daysDifference < 7L -> "${daysDifference} ngày trước"
+        daysDifference < 7L -> "$daysDifference ngày trước"
         else -> {
             val formatter = SimpleDateFormat("dd/MM/yyyy", Locale("vi", "VN"))
             formatter.format(date)
@@ -513,3 +516,5 @@ fun NoExpenseDataCard() {
         }
     }
 }
+
+
