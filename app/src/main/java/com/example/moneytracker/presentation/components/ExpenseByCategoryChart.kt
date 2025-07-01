@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.example.moneytracker.data.local.entities.Category
 import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.util.toVND
+import com.example.moneytracker.ui.theme.*
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -245,16 +246,16 @@ private fun CategoryLegendItem(
 
 private fun getCategoryColor(categoryId: Int): Color {
     val colors = listOf(
-        Color(0xFF4285F4), // Blue
-        Color(0xFFEA4335), // Red
-        Color(0xFFFBBC05), // Yellow
-        Color(0xFF34A853), // Green
-        Color(0xFF9C27B0), // Purple
-        Color(0xFFFF6D00), // Orange
-        Color(0xFF00BCD4), // Cyan
-        Color(0xFF795548), // Brown
-        Color(0xFF607D8B), // Blue Grey
-        Color(0xFFE91E63)  // Pink
+        Primary,        // Neon Purple
+        IncomeGreen,    // Neon Cyan  
+        ExpenseRed,     // Neon Pink
+        Secondary,      // Light Blue
+        Accent,         // Golden Yellow
+        CategoryColor1, // Coral
+        InfoBlue,       // Info Blue
+        WarningOrange,  // Warning Orange
+        SecondaryVariant, // Dark Blue
+        AccentVariant   // Orange
     )
     return colors[categoryId % colors.size]
 }

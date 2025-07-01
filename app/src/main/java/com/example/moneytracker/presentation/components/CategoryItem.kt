@@ -17,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.moneytracker.R
 import com.example.moneytracker.data.local.entities.Category
+import com.example.moneytracker.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +63,8 @@ fun CategoryItem(
                 Icon(
                     imageVector = Icons.Default.Category,
                     contentDescription = stringResource(R.string.category_icon),
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
+                    tint = if (category.type == "income") IncomeGreen else ExpenseRed
                 )
             }
             
@@ -70,7 +73,9 @@ fun CategoryItem(
             // Name
             Text(
                 text = category.name,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Medium
+                ),
                 maxLines = 1
             )
             
@@ -78,7 +83,7 @@ fun CategoryItem(
             
             // Type
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = if (category.type == "income") IncomeGreen else ExpenseRed,
                 shape = MaterialTheme.shapes.small
             ) {
                 Text(
@@ -86,8 +91,10 @@ fun CategoryItem(
                         stringResource(R.string.expense)
                     else 
                         stringResource(R.string.income),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = androidx.compose.ui.graphics.Color.White,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }

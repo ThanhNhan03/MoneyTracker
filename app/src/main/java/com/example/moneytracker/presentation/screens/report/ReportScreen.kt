@@ -533,14 +533,14 @@ private fun ReportScreenContentPreview() {
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "💡 Phân tích tài chính",
+                        text = "Phân tích tài chính",
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold
                         )
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Thu nhập tháng này khá ổn định! 📈✨",
+                        text = "Thu nhập tháng này khá ổn định!",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }

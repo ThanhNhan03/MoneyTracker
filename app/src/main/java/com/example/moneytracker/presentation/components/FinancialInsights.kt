@@ -79,7 +79,7 @@ fun FinancialInsights(
         } else if (transactions.isNotEmpty()) {
             aiInsights = listOf(
                 AiInsight(
-                    text = "Cần kết nối AI để có phân tích chi tiết hơn! 🔌📊",
+                    text = "Cần kết nối AI để có phân tích chi tiết hơn!",
                     icon = Icons.Default.CloudOff,
                     iconColor = Color(0xFF757575),
                     backgroundColor = Color(0xFF757575).copy(alpha = 0.1f)
@@ -95,7 +95,7 @@ fun FinancialInsights(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = if (useAi && geminiService != null) "🤖 AI Phân tích tài chính" else "💡 Phân tích tài chính",
+                text = if (useAi && geminiService != null) "AI Phân tích tài chính" else "Phân tích tài chính",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -146,7 +146,7 @@ fun FinancialInsights(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "🤖 AI đang suy nghĩ để tư vấn cho bạn...",
+                            text = "AI đang suy nghĩ để tư vấn cho bạn...",
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontWeight = FontWeight.Medium
                             ),
@@ -169,7 +169,7 @@ fun FinancialInsights(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Chưa có đủ dữ liệu để phân tích 📊",
+                            text = "Chưa có đủ dữ liệu để phân tích",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -254,25 +254,25 @@ private fun getBasicInsights(
     val expenseRatio = if (totalIncome > 0) totalExpense / totalIncome else 0.0
     when {
         expenseRatio > 1.0 -> insights.add(AiInsight(
-            text = "Chi tiêu vượt thu nhập - cần cân đối lại ngân sách! 💸📊",
+            text = "Chi tiêu vượt thu nhập - cần cân đối lại ngân sách!",
             icon = Icons.Default.Warning,
             iconColor = Color(0xFFEA4335),
             backgroundColor = Color(0xFFEA4335).copy(alpha = 0.1f)
         ))
         expenseRatio > 0.8 -> insights.add(AiInsight(
-            text = "Chi tiêu 80% thu nhập - hãy thận trọng với tiền bạc! ⚠️💰",
+            text = "Chi tiêu 80% thu nhập - hãy thận trọng với tiền bạc!",
             icon = Icons.Default.TrendingUp,
             iconColor = Color(0xFFFF9800),
             backgroundColor = Color(0xFFFF9800).copy(alpha = 0.1f)
         ))
         expenseRatio < 0.3 -> insights.add(AiInsight(
-            text = "Tiết kiệm rất tốt - bạn đang quản lý tài chính xuất sắc! ⭐💪",
+            text = "Tiết kiệm rất tốt - bạn đang quản lý tài chính xuất sắc!",
             icon = Icons.Default.Star,
             iconColor = Color(0xFF4CAF50),
             backgroundColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
         ))
         else -> insights.add(AiInsight(
-            text = "Chi tiêu hợp lý - tài chính đang cân bằng tốt! 📈👍",
+            text = "Chi tiêu hợp lý - tài chính đang cân bằng tốt!",
             icon = Icons.Default.ThumbUp,
             iconColor = Color(0xFF2196F3),
             backgroundColor = Color(0xFF2196F3).copy(alpha = 0.1f)
@@ -282,19 +282,19 @@ private fun getBasicInsights(
     // Phân tích số dư
     when {
         balance > totalIncome * 0.5 -> insights.add(AiInsight(
-            text = "Số dư khá cao - có thể cân nhắc đầu tư! 🏦💎",
+            text = "Số dư khá cao - có thể cân nhắc đầu tư!",
             icon = Icons.Default.AccountBalance,
             iconColor = Color(0xFF4CAF50),
             backgroundColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
         ))
         balance > 0 -> insights.add(AiInsight(
-            text = "Còn dư tiền cuối tháng - quản lý tốt! 🍀💚",
+            text = "Còn dư tiền cuối tháng - quản lý tốt!",
             icon = Icons.Default.Favorite,
             iconColor = Color(0xFF4CAF50),
             backgroundColor = Color(0xFF4CAF50).copy(alpha = 0.1f)
         ))
         balance < 0 -> insights.add(AiInsight(
-            text = "Số dư âm - cần xem xét lại chi tiêu! 📉⚠️",
+            text = "Số dư âm - cần xem xét lại chi tiêu!",
             icon = Icons.Default.SentimentDissatisfied,
             iconColor = Color(0xFFEA4335),
             backgroundColor = Color(0xFFEA4335).copy(alpha = 0.1f)
@@ -304,7 +304,7 @@ private fun getBasicInsights(
     // Phân tích danh mục chi tiêu
     topExpenseCategory?.let { category ->
         insights.add(AiInsight(
-            text = "Chi nhiều nhất cho '$category' - đây là ưu tiên chính! 🎯📋",
+            text = "Chi nhiều nhất cho '$category' - đây là ưu tiên chính!",
             icon = Icons.Default.Category,
             iconColor = Color(0xFF9C27B0),
             backgroundColor = Color(0xFF9C27B0).copy(alpha = 0.1f)

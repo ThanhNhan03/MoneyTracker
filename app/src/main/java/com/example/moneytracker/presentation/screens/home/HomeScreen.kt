@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 import com.example.moneytracker.data.local.entities.Transaction
 import android.util.Log
+import androidx.compose.material.icons.filled.BarChart
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -481,9 +482,11 @@ fun NoExpenseDataCard() {
             modifier = Modifier.padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "📊",
-                style = MaterialTheme.typography.displaySmall
+            Icon(
+                imageVector = Icons.Default.BarChart,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(

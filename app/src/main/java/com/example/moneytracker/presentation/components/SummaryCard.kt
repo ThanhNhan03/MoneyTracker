@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.moneytracker.data.local.entities.Transaction
 import com.example.moneytracker.util.toVND
+import com.example.moneytracker.ui.theme.*
 
 @Composable
 fun SummaryCard(
@@ -45,7 +46,7 @@ fun SummaryCard(
                     SummaryItem(
                         label = "Thu nhập",
                         amount = totalIncome,
-                        color = Color(0xFF27AE60),
+                        color = IncomeGreen,
                         isPositive = true
                     )
                 }
@@ -53,7 +54,7 @@ fun SummaryCard(
                     SummaryItem(
                         label = "Chi tiêu",
                         amount = totalExpense,
-                        color = Color(0xFFE74C3C),
+                        color = ExpenseRed,
                         isPositive = false
                     )
                 }
@@ -61,23 +62,23 @@ fun SummaryCard(
                     SummaryItem(
                         label = "Thu nhập",
                         amount = totalIncome,
-                        color = Color(0xFF27AE60),
+                        color = IncomeGreen,
                         isPositive = true
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     SummaryItem(
                         label = "Chi tiêu",
                         amount = totalExpense,
-                        color = Color(0xFFE74C3C),
+                        color = ExpenseRed,
                         isPositive = false
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Divider()
+                    HorizontalDivider()
                     Spacer(modifier = Modifier.height(8.dp))
                     SummaryItem(
                         label = "Số dư ròng",
                         amount = netAmount,
-                        color = if (netAmount >= 0) Color(0xFF27AE60) else Color(0xFFE74C3C),
+                        color = if (netAmount >= 0) IncomeGreen else ExpenseRed,
                         isPositive = netAmount >= 0,
                         isTotal = true
                     )

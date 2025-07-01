@@ -12,13 +12,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.moneytracker.R
 import com.example.moneytracker.data.local.entities.Category
 import com.example.moneytracker.presentation.components.CategoryItem
 import com.example.moneytracker.presentation.viewmodel.CategoryViewModel
+import com.example.moneytracker.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,22 +60,53 @@ fun CategoryScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Type Selector
-            Row(
+            // Type Selector - Enhanced
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                listOf(
-                    "expense" to stringResource(R.string.expense),
-                    "income" to stringResource(R.string.income)
-                ).forEach { (type, label) ->
-                    FilterChip(
-                        selected = type == selectedType,
-                        onClick = { selectedType = type },
-                        label = { Text(label) }
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Loại danh mục",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.padding(bottom = 16.dp)
                     )
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        listOf(
+                            "expense" to stringResource(R.string.expense),
+                            "income" to stringResource(R.string.income)
+                        ).forEach { (type, label) ->
+                            FilterChip(
+                                selected = type == selectedType,
+                                onClick = { selectedType = type },
+                                label = { 
+                                    Text(
+                                        text = label,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    ) 
+                                },
+                                modifier = Modifier.weight(1f),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = if (type == "income") IncomeGreen else ExpenseRed,
+                                    selectedLabelColor = Color.White
+                                )
+                            )
+                        }
+                    }
                 }
             }
 

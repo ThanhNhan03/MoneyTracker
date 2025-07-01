@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.example.moneytracker.ui.theme.*
 import kotlin.math.min
 
 @Composable
@@ -31,11 +32,14 @@ fun TransactionChart(
         "Other" to 5.0
     ),
     colors: List<Color> = listOf(
-        Color(0xFF4285F4), // Blue
-        Color(0xFFEA4335), // Red
-        Color(0xFFFBBC05), // Yellow
-        Color(0xFF34A853), // Green
-        Color(0xFF9C27B0)  // Purple
+        Primary,        // Neon Purple
+        IncomeGreen,    // Neon Cyan
+        ExpenseRed,     // Neon Pink
+        Secondary,      // Light Blue
+        Accent,         // Golden Yellow
+        CategoryColor1, // Coral
+        InfoBlue,       // Info Blue
+        WarningOrange   // Warning Orange
     )
 ) {
     val total = data.values.sum()
