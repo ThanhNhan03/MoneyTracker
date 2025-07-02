@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit
 import com.example.moneytracker.data.local.entities.Transaction
 import android.util.Log
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.NoteAlt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -326,9 +327,11 @@ fun RecentTransactionsSection(
                         .padding(vertical = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "📝",
-                        style = MaterialTheme.typography.headlineMedium
+                    Icon(
+                        imageVector = Icons.Default.NoteAlt,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(

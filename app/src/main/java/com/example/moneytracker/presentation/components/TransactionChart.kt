@@ -22,6 +22,7 @@ import com.example.moneytracker.ui.theme.*
 import kotlin.math.min
 
 @Composable
+@Suppress("UnusedBoxWithConstraintsScope")
 fun TransactionChart(
     modifier: Modifier = Modifier,
     data: Map<String, Double> = mapOf(
@@ -132,7 +133,6 @@ fun TransactionChart(
         // Legend
         val legendSpacing = 4.dp
         val legendItemHeight = 16.dp
-        val legendItemWidth = with(LocalDensity.current) { (size * 0.6f).toDp() }
         
         Column(
             modifier = Modifier
