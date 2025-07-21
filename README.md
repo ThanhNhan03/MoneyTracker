@@ -51,3 +51,19 @@ This is the outermost layer, responsible for displaying the user interface (UI) 
 *   **`di` (Dependency Injection)**: Contains Hilt (or Dagger) modules to provide dependencies for the entire application, reducing hard dependencies and increasing modularity.
 *   **`ui`**: Contains common UI elements such as `theme`, `component` (reusable Composables), and `navigation`.
 *   **`util`**: Contains utility classes, constants, or extension functions used in multiple places throughout the application.
+
+## Business Logic
+
+The core business logic for financial calculations is handled through SQL queries within the `TransactionDao`.
+
+### 1. Calculating Total Income or Expense (`getTotalAmountByTypeAndDateRange`)
+
+*   The application calculates the total amount for a specific transaction type (`income` or `expense`).
+*   This calculation is performed within a specified date range (`startDate` and `endDate`).
+
+### 2. Monthly Statistics (`getMonthlyStatistics`)
+
+*   The application groups all transactions by month and year.
+*   For each month, it calculates the total income by summing up all transactions of type `income`.
+*   Simultaneously, it calculates the total expense by summing up all transactions of type `expense`.
+*   The result is a list of objects, where each object contains the month, total income, and total expense for that month.
