@@ -56,14 +56,31 @@ This is the outermost layer, responsible for displaying the user interface (UI) 
 
 The core business logic for financial calculations is handled through SQL queries within the `TransactionDao`.
 
-### 1. Calculating Total Income or Expense (`getTotalAmountByTypeAndDateRange`)
+### 1. Calculating Total Income or Expense
 
-*   The application calculates the total amount for a specific transaction type (`income` or `expense`).
-*   This calculation is performed within a specified date range (`startDate` and `endDate`).
+This logic calculates the total amount for a specific transaction type (`income` or `expense`) within a given date range.
 
-### 2. Monthly Statistics (`getMonthlyStatistics`)
+**Code (`TransactionDao.kt`):**
+```kotlin
+@Query("SELECT SUM(amount) FROM transactions WHERE type = :type AND date BETWEEN :startDate AND :endDate")
+fun getTotalAmountByTypeAndDateRange(type: String, startDate: Date, endDate: Date): Flow<Double?>
+```
 
-*   The application groups all transactions by month and year.
-*   For each month, it calculates the total income by summing up all transactions of type `income`.
-*   Simultaneously, it calculates the total expense by summing up all transactions of type `expense`.
-*   The result is a list of objects, where each object contains the month, total income, and total expense for that month.
+### 2. Monthly Statistics
+
+This logic groups all transactions by month and year to calculate the total income and expense for each month.
+
+**Code (`TransactionDao.kt`):**
+```kotlin
+@Query("""
+    SELECT 
+        strftime('%Y-%m', date/1000, 'unixepoch') as month,
+        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
+    FROM transactions 
+    WHERE date BETWEEN :startDate AND :endDate
+    GROUP BY strftime('%Y-%m', date/1000, 'unixepoch')
+    ORDER BY month
+""")
+suspend fun getMonthlyStatistics(startDate: Date, endDate: Date): List<MonthlyStatistics>
+```
