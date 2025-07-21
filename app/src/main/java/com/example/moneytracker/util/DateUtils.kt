@@ -59,7 +59,7 @@ object DateUtils {
             return "Hôm nay"
         }
         
-        // Check if it's yesterday
+            // Check if it's yesterday
         val yesterday = Calendar.getInstance().apply {
             add(Calendar.DAY_OF_MONTH, -1)
         }
